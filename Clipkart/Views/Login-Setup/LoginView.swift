@@ -9,7 +9,7 @@ import SwiftUI
 import CoreData
 
 struct LoginView: View {
- @StateObject var viewModel = LoginViewModel()
+    @StateObject var viewModel = LoginViewModel()
     @Environment(\.managedObjectContext) private var viewContext
     
     var body: some View {

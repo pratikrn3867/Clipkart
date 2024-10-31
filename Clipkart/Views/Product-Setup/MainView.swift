@@ -29,7 +29,7 @@ struct MainView: View {
             .navigationTitle("Products")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
-            .alert("net chalu kr bhadya", isPresented: $viewModel.isNetClosed) {}
+            .alert("Please turn on your internet!", isPresented: $viewModel.isNetClosed) {}
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button(action: {
@@ -38,7 +38,7 @@ struct MainView: View {
                         Image(systemName: "line.horizontal.3")
                             .font(.title2)
                             .foregroundColor(.black)
-
+                        
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {

@@ -12,4 +12,13 @@ struct UserTags : Codable {
     let fullName: String
     let password: String
     let confirmPassword: String
+    
+    var initials: String {
+        let formatter = PersonNameComponentsFormatter()
+        if let components = formatter.personNameComponents(from: fullName) {
+            formatter.style = .abbreviated
+            return formatter.string(from: components)
+        }
+        return ""
+    }
 }
