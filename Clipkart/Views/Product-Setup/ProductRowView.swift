@@ -83,4 +83,3 @@ struct ProductRowView: View {
 #Preview {
     ProductRowView(product: Product(id: 0, title: "", description: "", category: "", image: "", price: 0.0, rating: Rate(rate: 0.0, count: 0)))
 }
-
