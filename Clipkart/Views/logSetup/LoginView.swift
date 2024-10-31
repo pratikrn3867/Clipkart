@@ -72,6 +72,7 @@ struct LoginView: View {
         .ignoresSafeArea()
         .padding(.horizontal)
         .padding(.vertical, 8)
+        .navigationBarBackButtonHidden(true)
         .alert(isPresented: $viewModel.loginFailed) {
             Alert(title: Text("Alert"), message: Text(viewModel.alertMessage), dismissButton: .default(Text("OK")))
         }

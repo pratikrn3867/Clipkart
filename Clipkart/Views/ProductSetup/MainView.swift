@@ -10,67 +10,58 @@ import SwiftUI
 struct MainView: View {
     @StateObject var viewModel = ProductViewModel()
     @State private var isMenuOpen = false
+    @State private var isCart = false
     
     var body: some View {
         ZStack {
-            TabView {
-                // Home Tab
-                NavigationStack {
-                    List {
-                        ForEach(Array(viewModel.products.enumerated()), id: \.element.id) { index, product in
-                            if NetworkMonitor.shared.netOn {
-                                NavigationLink {
-                                    ProductDetailsView(products: viewModel.products, index: index)
-                                        .navigationBarBackButtonHidden(true)
-                                } label: {
-                                    ProductRowView(product: product)
-                                }
-                            }
+            List {
+                ForEach(Array(viewModel.products.enumerated()), id: \.element.id) { index, product in
+                    if NetworkMonitor.shared.netOn {
+                        NavigationLink {
+                            ProductDetailsView(products: viewModel.products, index: index)
+                        } label: {
+                            ProductRowView(product: product)
                         }
                     }
-                    .listStyle(.plain)
-                    .navigationTitle("Products")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .navigationBarBackButtonHidden(true)
-                    .navigationBarItems(leading: Button(action: {
-                        isMenuOpen.toggle()
-                    }) {
-                        Image(systemName: "line.horizontal.3")
-                            .font(.title)
-                    })
-                    .alert("net chalu kr bhadya", isPresented: $viewModel.isNetClosed) {}
-                }
-                .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("Home")
-                }
-                
-                // Settings Tab
-                NavigationStack {
-                    SettingsView()
-                        .navigationTitle("Settings")
-                        .navigationBarBackButtonHidden(true)
-                }
-                .tabItem {
-                    Image(systemName: "gearshape.fill")
-                    Text("Settings")
-                }
-                
-                // Profile Tab
-                NavigationStack {
-                    ProfileView()
-                        .navigationTitle("Profile")
-                        .navigationBarBackButtonHidden(true)
-                }
-                .tabItem {
-                    Image(systemName: "person.fill")
-                    Text("Profile")
                 }
             }
+            .listStyle(.plain)
+            .navigationTitle("Products")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .alert("net chalu kr bhadya", isPresented: $viewModel.isNetClosed) {}
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: {
+                        isMenuOpen.toggle() // Toggle the menu when tapped
+                    }) {
+                        Image(systemName: "line.horizontal.3")
+                            .font(.title2)
+                            .foregroundColor(.black)
+
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        isCart = true // Toggle the CartView when tapped
+                    }) {
+                        Image(systemName: "cart")
+                            .font(.title2)
+                            .foregroundColor(.black)
+                    }
+                }
+            }
+            .background(
+                NavigationLink(destination: CartView(), isActive: $isCart) {
+                    EmptyView()
+                }
+                    .hidden() // Hide the navigation link
+            )
             // Side menu
             if isMenuOpen {
                 SideMenu(isMenuOpen: $isMenuOpen)
                     .transition(.move(edge: .leading))
+                    .zIndex(1) // Ensure the side menu is above the tab view
                     .offset(x: -50) // Adjust this value to move the menu further left
             }
         }
@@ -81,12 +72,10 @@ struct MainView: View {
     }
 }
 
-#Preview {
-    MainView()
-}
-
 struct SideMenu: View {
     @Binding var isMenuOpen: Bool
+    @State private var isLogOut:Bool = false
+    @State private var isExplore:Bool = false
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -107,9 +96,9 @@ struct SideMenu: View {
             
             Button(action: {
                 // Handle Settings action
-                isMenuOpen = false // Close menu after selection
+                isExplore = true // will go to setting and profile
             }) {
-                Text("My Rewards")
+                Text("Explore")
                     .font(.headline) // Change font size
                     .foregroundColor(.white) // Text color
                     .padding() // Internal padding
@@ -118,6 +107,10 @@ struct SideMenu: View {
             }
             .padding() // Outer padding to separate from other views
             .frame(maxWidth: .infinity, alignment: .leading) // Align to the leading edge
+            
+            NavigationLink(destination: ProfileView(), isActive: $isExplore) {
+                EmptyView()
+            }
             
             Button(action: {
                 // Handle Settings action
@@ -163,7 +156,7 @@ struct SideMenu: View {
             
             Button(action: {
                 // Handle Settings action
-                isMenuOpen = false // Close menu after selection
+                isLogOut = true // Close user session
             }) {
                 Text("Log Out")
                     .font(.headline) // Change font size
@@ -174,6 +167,10 @@ struct SideMenu: View {
             }
             .padding() // Outer padding to separate from other views
             .frame(maxWidth: .infinity, alignment: .leading) // Align to the leading edge
+            
+            NavigationLink(destination: LoginView(), isActive: $isLogOut) {
+                EmptyView()
+            }
             Spacer()
         }
         .frame(width: 290)
@@ -183,7 +180,13 @@ struct SideMenu: View {
         .onTapGesture {
             isMenuOpen = false // Close menu on tap outside
         }
+        .offset(x: isMenuOpen ? 0 : -290) // Off-screen when closed
+        .animation(.bouncy) // Animate the movement
     }
+}
+
+#Preview {
+    MainView()
 }
 
 
