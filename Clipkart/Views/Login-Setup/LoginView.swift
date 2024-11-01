@@ -42,7 +42,7 @@ struct LoginView: View {
                     Button(action: {
                         login()
                     }) {
-                        Text("Login")
+                         Text("Login")
                             .fontWeight(.bold)
                             .font(.headline) // Change font size
                             .foregroundColor(.green) // Text color
